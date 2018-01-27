@@ -27,27 +27,39 @@ class App extends React.Component {
 
     render() {
 
-        
-
         return (
             <div>
                 <h1>anna palautetta</h1>
                 <Button name="hyvä" onClick={this.setHyva} />
                 <Button name="neutraali" onClick={this.setNeutraali} />
                 <Button name="huono" onClick={this.setHuono} />
-                <h1>statistiikka</h1>
-                <p>hyvä {this.state.hyva}</p>
-                <p>neutraali {this.state.neutraali}</p>
-                <p>huono {this.state.huono}</p>
-                <p>keskiarvo {this.state.yht > 0 ? (this.state.hyva  - this.state.huono) / this.state.yht : 0}</p>
-                <p>positiivisia {this.state.yht > 0 ? this.state.hyva / this.state.yht * 100 : 0}% </p>
+                <Statistics
+                    hyva={this.state.hyva}
+                    neutraali={this.state.neutraali}
+                    huono={this.state.huono}
+                    yht={this.state.yht}
+                />
             </div>
         )
     }
 }
 
-const Button = ({name, onClick}) => (
+const Button = ({ name, onClick }) => (
     <button onClick={onClick}>{name}</button>
+)
+
+const Statistics = ({ hyva, neutraali, huono, yht }) => (
+    <div>
+        <Statistic text="hyvä" data={hyva} />
+        <Statistic text="neutraali" data={neutraali} />
+        <Statistic text="huono" data={huono} />
+        <Statistic text="keskiarvo" data={yht > 0 ? (hyva - huono) / yht : 0}/>
+        <Statistic text="positiivisia" data={yht > 0 ? hyva / yht * 100 : 0} extra="%" />
+    </div>
+)
+
+const Statistic = ({ text, data, extra }) => (
+    <p>{text} {data}{extra}</p>
 )
 
 ReactDOM.render(
