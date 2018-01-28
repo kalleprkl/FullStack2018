@@ -14,16 +14,16 @@ class App extends React.Component {
     }
 
     handleClick = (name) => {
-        const states = this.state
-        console.log(states)
-        states['yht'] = this.state.yht + 1
-        states[name] = this.state.hyva + 1
+
         return () => {
-            this.setState(states)
+            const newState = {}
+            newState[name] = this.state[name] + 1
+            newState['yht'] = this.state.yht + 1
+            this.setState(newState)
         }
     }
 
-    setHyva = () => {
+    /*setHyva = () => {
         this.setState({ hyva: this.state.hyva + 1, yht: this.state.yht + 1 })
     }
 
@@ -33,9 +33,10 @@ class App extends React.Component {
 
     setHuono = () => {
         this.setState({ huono: this.state.huono + 1, yht: this.state.yht + 1 })
-    }
+    }*/
 
     render() {
+        console.log('render')
         return (
             <div>
                 <h1>anna palautetta</h1>
