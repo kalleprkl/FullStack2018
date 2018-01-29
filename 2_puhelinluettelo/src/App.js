@@ -26,6 +26,7 @@ class App extends React.Component {
             const persons = this.state.persons.concat(person)
             this.setState({
                 persons,
+                toDisplay: persons,
                 newName: '',
                 newNumber: ''
             })
@@ -52,35 +53,71 @@ class App extends React.Component {
         return (
             <div>
                 <h1>Puhelinluettelo</h1>
-                <div>
-                    rajaa näytettäviä 
-                    <input onChange={this.search} />
-                </div>
+                <Search onChange={this.search} />
                 <h2>Lisää uusi</h2>
-                <form onSubmit={this.addPerson}>
-                    <div>
-                        nimi: <input value={this.state.newName} onChange={this.handleNameChange} />
-                    </div>
-                    <div>
-                        numero: <input value={this.state.newNumber} onChange={this.handleNumberChange} />
-                    </div>
-                    <div>
-                        <button type="submit">lisää</button>
-                    </div>
-                </form>
+                <Add
+                    onSubmit={this.addPerson}
+                    newName={this.state.newName}
+                    newNumber={this.state.newNumber}
+                    onNameChange={this.handleNameChange}
+                    onNumberChange={this.handleNumberChange}
+                />
+
                 <h1>Numerot</h1>
-                <table>
-                    <tbody>
-                        {this.state.toDisplay.map(person =>
-                            <tr key={person.name}>
-                                <td>{person.name}</td>
-                                <td>{person.number}</td>
-                            </tr>)}
-                    </tbody>
-                </table>
+                <Display toDisplay={this.state.toDisplay} />
             </div>
         )
     }
+}
+
+const Search = ({ onChange }) => {
+    return (
+        <div>
+            rajaa näytettäviä
+            <input onChange={onChange} />
+        </div>
+    )
+}
+
+const Add = (props) => {
+    return (
+        <form onSubmit={props.onSubmit}>
+            <Input text='nimi' value={props.newName} onChange={props.onNameChange} />
+            <Input text='numero' value={props.newNumber} onChange={props.onNumberChange} />
+            <div>
+                <button type="submit">lisää</button>
+            </div>
+        </form>
+    )
+}
+
+const Input = (props) => {
+    return (
+        <div>
+            {props.text}: <input value={props.value} onChange={props.onChange} />
+        </div>
+    )
+}
+
+const Display = ({ toDisplay }) => {
+    return (
+        <table>
+            <tbody>
+                {toDisplay.map(person =>
+                    <Row key={person.name} person={person} />
+                )}
+            </tbody>
+        </table>
+    )
+}
+
+const Row = ({ person }) => {
+    return (
+        <tr>
+            <td>{person.name}</td>
+            <td>{person.number}</td>
+        </tr>
+    )
 }
 
 export default App
