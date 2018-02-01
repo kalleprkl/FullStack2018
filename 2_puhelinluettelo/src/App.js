@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios'
 
 const data = [
     { name: 'Arto Hellas', number: '040-123456' },
@@ -16,6 +17,14 @@ class App extends React.Component {
             newName: '',
             newNumber: ''
         }
+    }
+
+    componentWillMount() {
+        axios
+            .get('http://localhost:3001/persons')
+            .then(response => {
+                this.setState({ persons: response.data, toDisplay: response.data })
+            })
     }
 
     addPerson = (event) => {
