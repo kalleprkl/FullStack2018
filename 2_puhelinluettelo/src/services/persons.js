@@ -17,4 +17,11 @@ const destroy = (id) => {
     axios.delete(path)
 }
 
-export default { getAll, create, destroy }
+const update = (id, newPerson) => {
+    const path = baseUrl.concat('/' + id)
+    const request = axios.put(path,newPerson)
+    console.log(id)
+    return request.then(response => response.data)
+}
+
+export default { getAll, create, destroy, update }

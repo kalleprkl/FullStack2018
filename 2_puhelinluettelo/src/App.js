@@ -46,21 +46,30 @@ class App extends React.Component {
                         newNumber: ''
                     })
                 })
-            /*axios
-                .post('http://localhost:3001/persons', person)
-                .then(response => {
-                    const persons = this.state.persons.concat(response.data)
-                    this.setState({
-                        persons,
-                        toDisplay: persons,
-                        newName: '',
-                        newNumber: ''
-                    })
-                })*/
         } else {
-            alert('nimi on jo luettelossa')
+            if (person.number !== '' && person.number !== checkName.number) {
+                if (window.confirm(person.name + ' on jo luettelossa, korvataanko vanha numero uudella?')) {
+                    this.update(checkName.id, person)
+                }
+            } else {
+                alert('nimi on jo luettelossa')
+            }
         }
 
+    }
+
+    update = (id, person) => {
+        personService
+            .update(id, person)
+            .then(updatedPerson => {
+                const persons = this.state.persons.filter(p => p.id !== id).concat(updatedPerson)
+                this.setState({
+                    persons,
+                    toDisplay: persons,
+                    newName: '',
+                    newNumber: ''
+                })
+            })
     }
 
     handleNameChange = (event) => {
@@ -158,7 +167,7 @@ const Row = ({ person, remove }) => {
         <tr>
             <td>{person.name}</td>
             <td>{person.number}</td>
-            <td><button onClick={remove}>remove</button></td>
+            <td><button onClick={remove}>poista</button></td>
         </tr>
     )
 }
