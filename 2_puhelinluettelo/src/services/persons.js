@@ -12,4 +12,9 @@ const create = (newPerson) => {
     return request.then(response => response.data)
 }
 
-export default { getAll, create }
+const destroy = (id) => {
+    const path = baseUrl.concat('/' + id)
+    axios.delete(path)
+}
+
+export default { getAll, create, destroy }

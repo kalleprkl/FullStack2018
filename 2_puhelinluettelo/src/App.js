@@ -76,6 +76,21 @@ class App extends React.Component {
         this.setState({ toDisplay: results })
     }
 
+    remove = (person) => {
+        return () => {
+            if (window.confirm('poistetaanko ' + person.name + '?')) {
+                personService.destroy(person.id)
+                const indexToRemove = this.state.persons.indexOf(person)
+                const persons = this.state.persons.slice()
+                persons.splice(indexToRemove, 1)
+                this.setState({
+                    persons,
+                    toDisplay: persons
+                })
+            }
+        }
+    }
+
     render() {
         return (
             <div>
@@ -91,7 +106,7 @@ class App extends React.Component {
                 />
 
                 <h1>Numerot</h1>
-                <Display toDisplay={this.state.toDisplay} />
+                <Display toDisplay={this.state.toDisplay} remove={this.remove} />
             </div>
         )
     }
@@ -126,23 +141,24 @@ const Input = (props) => {
     )
 }
 
-const Display = ({ toDisplay }) => {
+const Display = ({ toDisplay, remove }) => {
     return (
         <table>
             <tbody>
                 {toDisplay.map(person =>
-                    <Row key={person.name} person={person} />
+                    <Row key={person.name} person={person} remove={remove(person)} />
                 )}
             </tbody>
         </table>
     )
 }
 
-const Row = ({ person }) => {
+const Row = ({ person, remove }) => {
     return (
         <tr>
             <td>{person.name}</td>
             <td>{person.number}</td>
+            <td><button onClick={remove}>remove</button></td>
         </tr>
     )
 }
