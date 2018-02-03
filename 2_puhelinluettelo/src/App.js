@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios'
+import personService from './services/persons'
 
 const data = [
     { name: 'Arto Hellas', number: '040-123456' },
@@ -20,10 +20,13 @@ class App extends React.Component {
     }
 
     componentWillMount() {
-        axios
-            .get('http://localhost:3001/persons')
+        personService
+            .getAll()
             .then(response => {
-                this.setState({ persons: response.data, toDisplay: response.data })
+                this.setState({
+                    persons: response,
+                    toDisplay: response
+                })
             })
     }
 
@@ -32,7 +35,18 @@ class App extends React.Component {
         const person = { name: this.state.newName, number: this.state.newNumber }
         const checkName = this.state.persons.find(person => person.name === this.state.newName)
         if (checkName === undefined) {
-            axios
+            personService
+                .create(person)
+                .then(newPerson => {
+                    const persons = this.state.persons.concat(newPerson)
+                    this.setState({
+                        persons,
+                        toDisplay: persons,
+                        newName: '',
+                        newNumber: ''
+                    })
+                })
+            /*axios
                 .post('http://localhost:3001/persons', person)
                 .then(response => {
                     const persons = this.state.persons.concat(response.data)
@@ -42,7 +56,7 @@ class App extends React.Component {
                         newName: '',
                         newNumber: ''
                     })
-                })
+                })*/
         } else {
             alert('nimi on jo luettelossa')
         }
