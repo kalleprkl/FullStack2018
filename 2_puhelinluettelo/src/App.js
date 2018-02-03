@@ -30,15 +30,19 @@ class App extends React.Component {
     addPerson = (event) => {
         event.preventDefault()
         const person = { name: this.state.newName, number: this.state.newNumber }
-        const checkName = this.state.persons.filter(person => person.name === this.state.newName)
-        if (checkName.length === 0) {
-            const persons = this.state.persons.concat(person)
-            this.setState({
-                persons,
-                toDisplay: persons,
-                newName: '',
-                newNumber: ''
-            })
+        const checkName = this.state.persons.find(person => person.name === this.state.newName)
+        if (checkName === undefined) {
+            axios
+                .post('http://localhost:3001/persons', person)
+                .then(response => {
+                    const persons = this.state.persons.concat(response.data)
+                    this.setState({
+                        persons,
+                        toDisplay: persons,
+                        newName: '',
+                        newNumber: ''
+                    })
+                })
         } else {
             alert('nimi on jo luettelossa')
         }
