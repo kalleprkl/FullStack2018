@@ -16,7 +16,8 @@ class App extends React.Component {
             toDisplay: data,
             newName: '',
             newNumber: '',
-            message: null
+            message: null,
+            error: false
         }
     }
 
@@ -79,6 +80,18 @@ class App extends React.Component {
                     this.setState({ message: null })
                 }, 5000);
             })
+            .catch(error => {
+                const persons = this.state.persons.filter(p => p.id !== id)
+                this.setState({
+                    persons,
+                    toDisplay: persons,
+                    message: 'yhteystieto on poistettu',
+                    error: true
+                })
+                setTimeout(() => {
+                    this.setState({ message: null, error: false })
+                }, 5000);
+            })
     }
 
     handleNameChange = (event) => {
@@ -116,7 +129,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <Notification message={this.state.message}/>
+                <Notification message={this.state.message} error={this.state.error}/>
                 <h1>Puhelinluettelo</h1>
                 <Search onChange={this.search} />
                 <h2>Lisää uusi</h2>
@@ -135,13 +148,19 @@ class App extends React.Component {
     }
 }
 
-const Notification = ({ message }) => {
+const Notification = ({ message, error }) => {
     if (message === null) {
         return null
     } else {
-        return (
-            <div className='success'>{message}</div>
-        )
+        if (error) {
+            return (
+                <div className='error'>{message}</div>
+            )
+        } else {
+            return (
+                <div className='success'>{message}</div>
+            )
+        }
     }
 }
 
