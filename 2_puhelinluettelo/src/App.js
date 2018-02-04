@@ -15,7 +15,8 @@ class App extends React.Component {
             persons: data,
             toDisplay: data,
             newName: '',
-            newNumber: ''
+            newNumber: '',
+            message: null
         }
     }
 
@@ -43,8 +44,12 @@ class App extends React.Component {
                         persons,
                         toDisplay: persons,
                         newName: '',
-                        newNumber: ''
+                        newNumber: '',
+                        message: 'uusi henkilö lisätty onnistuneesti'
                     })
+                    setTimeout(() => {
+                        this.setState({ message: null })
+                    }, 5000);
                 })
         } else {
             if (person.number !== '' && person.number !== checkName.number) {
@@ -67,8 +72,12 @@ class App extends React.Component {
                     persons,
                     toDisplay: persons,
                     newName: '',
-                    newNumber: ''
+                    newNumber: '',
+                    message: 'yhteystieto päivitetty'
                 })
+                setTimeout(() => {
+                    this.setState({ message: null })
+                }, 5000);
             })
     }
 
@@ -94,8 +103,12 @@ class App extends React.Component {
                 persons.splice(indexToRemove, 1)
                 this.setState({
                     persons,
-                    toDisplay: persons
+                    toDisplay: persons,
+                    message: 'yhteystieto poistettu'
                 })
+                setTimeout(() => {
+                    this.setState({ message: null })
+                }, 5000);
             }
         }
     }
@@ -103,6 +116,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
+                <Notification message={this.state.message}/>
                 <h1>Puhelinluettelo</h1>
                 <Search onChange={this.search} />
                 <h2>Lisää uusi</h2>
@@ -117,6 +131,16 @@ class App extends React.Component {
                 <h1>Numerot</h1>
                 <Display toDisplay={this.state.toDisplay} remove={this.remove} />
             </div>
+        )
+    }
+}
+
+const Notification = ({ message }) => {
+    if (message === null) {
+        return null
+    } else {
+        return (
+            <div className='success'>{message}</div>
         )
     }
 }
