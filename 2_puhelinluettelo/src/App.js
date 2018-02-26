@@ -1,19 +1,19 @@
 import React from 'react';
 import personService from './services/persons'
 
-const data = [
+/*const data = [
     { name: 'Arto Hellas', number: '040-123456' },
     { name: 'Martti Tienari', number: '040-123456' },
     { name: 'Arto Järvinen', number: '040-123456' },
     { name: 'Lea Kutvonen', number: '040-123456' }
-]
+]*/
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            persons: data,
-            toDisplay: data,
+            persons: [],
+            toDisplay: [],
             newName: '',
             newNumber: '',
             message: null,
@@ -25,6 +25,7 @@ class App extends React.Component {
         personService
             .getAll()
             .then(response => {
+                console.log(response)
                 this.setState({
                     persons: response,
                     toDisplay: response
