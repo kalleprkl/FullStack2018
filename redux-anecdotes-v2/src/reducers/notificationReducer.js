@@ -1,14 +1,11 @@
-
-let timer = null
-
-const notificationReducer = (store = '', action) => {
+const notificationReducer = (store = [], action) => {
     switch (action.type) {
         case 'ADDED':
-            return `you have created ${action.content}`
+            return [...store, `you have created ${action.content}`]
         case 'VOTED':
-            return `you have voted ${action.content}`
+            return [...store, `you have voted ${action.content}`]
         case 'CLEAR':
-            return ''
+            return store.splice(1)
         default:
             return store
     }
@@ -28,8 +25,7 @@ export const notifyVoted = (content) => {
     }
 }
 
-export const clearNotification = (timer) => {
-    //console.log(timer)
+export const clearNotification = () => {
     return {
         type: 'CLEAR'
     }
