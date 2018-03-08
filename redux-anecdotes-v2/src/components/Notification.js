@@ -10,7 +10,7 @@ class Notification extends React.Component {
     }
     return (
       <div style={style}>
-        {this.props.notifications.map(n => <p>{n}</p>)}
+        {this.props.notifications.map(n => <p key={n.id}>{n.content}</p>)}
       </div>
     )
   }

@@ -1,9 +1,20 @@
+const getId = () => (100000*Math.random()).toFixed(0)
+
+const asObject = (notification) => {
+  return {
+    content: notification,
+    id: getId()
+  }
+}
+
 const notificationReducer = (store = [], action) => {
     switch (action.type) {
         case 'ADDED':
-            return [...store, `you have created "${action.content}"`]
+            const newAdded = asObject(`you have created "${action.content}"`)
+            return [...store, newAdded]
         case 'VOTED':
-            return [...store, `you have voted "${action.content}"`]
+            const newVoted = asObject(`you have voted "${action.content}"`)
+            return [...store, newVoted]
         case 'CLEAR':
             return store.splice(1)
         default:
