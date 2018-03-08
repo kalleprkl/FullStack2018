@@ -1,7 +1,8 @@
-import { createStore, combineReducers } from 'redux'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
 import anecdoteReducer from './reducers/anecdoteReducer'
 import notificationReducer from './reducers/notificationReducer'
 import filterReducer from './reducers/filterReducer'
+import thunk from 'redux-thunk'
 
 const reducer = combineReducers({
     anecdotes: anecdoteReducer,
@@ -9,7 +10,7 @@ const reducer = combineReducers({
     filter: filterReducer
 })
 
-const store = createStore(reducer)
+const store = createStore(reducer, applyMiddleware(thunk))
 
 store.subscribe(() =>
   console.log(store.getState())
