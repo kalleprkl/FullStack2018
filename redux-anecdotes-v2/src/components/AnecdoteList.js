@@ -8,9 +8,8 @@ import anecdoteService from './../services/anecdotes'
 class AnecdoteList extends React.Component {
 
   handleClick = (anecdote) => async () => {
-    const updatedAnecdote = await anecdoteService.update(anecdote)
-    this.props.anecdoteVote(updatedAnecdote)
-    this.props.notifyVoted(updatedAnecdote.content)
+    this.props.anecdoteVote(anecdote)
+    this.props.notifyVoted(anecdote.content)
     setTimeout(() => {
       this.props.clearNotification()
     }, 5000)
