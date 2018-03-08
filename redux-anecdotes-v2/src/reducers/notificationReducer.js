@@ -1,9 +1,9 @@
 const notificationReducer = (store = [], action) => {
     switch (action.type) {
         case 'ADDED':
-            return [...store, `you have created ${action.content}`]
+            return [...store, `you have created "${action.content}"`]
         case 'VOTED':
-            return [...store, `you have voted ${action.content}`]
+            return [...store, `you have voted "${action.content}"`]
         case 'CLEAR':
             return store.splice(1)
         default:

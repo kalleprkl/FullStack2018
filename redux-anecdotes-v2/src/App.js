@@ -10,7 +10,7 @@ class App extends React.Component {
     return (
       <div>
         <h1>Programming anecdotes</h1>
-        {this.props.store.getState().notifications.length === 0 ? '' : <Notification store={this.props.store}/>}
+        {this.props.store.getState().notifications.length === 0 ? '' : <Notification />}
         <AnecdoteList store={this.props.store} />
         <AnecdoteForm store={this.props.store} />
       </div>
