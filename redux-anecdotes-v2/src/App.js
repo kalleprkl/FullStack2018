@@ -4,7 +4,6 @@ import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import { anecdoteInitialization } from './reducers/anecdoteReducer'
 import { connect } from 'react-redux'
-import anecdoteService from './services/anecdotes'
 
 class App extends React.Component {
 

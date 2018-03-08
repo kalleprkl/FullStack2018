@@ -9,6 +9,8 @@ const asObject = (notification) => {
 
 const notificationReducer = (store = [], action) => {
     switch (action.type) {
+        case 'NOTIFY':
+            return  [...store, asObject(action.notification)]
         case 'ADDED':
             const newAdded = asObject(`you have created "${action.content}"`)
             return [...store, newAdded]
@@ -19,6 +21,20 @@ const notificationReducer = (store = [], action) => {
             return store.splice(1)
         default:
             return store
+    }
+}
+
+export const notify = (notification, timer) => {
+    return (dispatch) => {
+        dispatch({
+            type: 'NOTIFY',
+            notification
+        })
+        setTimeout(() => {
+            dispatch({
+                type: 'CLEAR'
+            })
+        }, timer * 1000)
     }
 }
 
