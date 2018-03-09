@@ -1,11 +1,31 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, NavLink } from 'react-router-dom'
+
+const styles = {
+  menu: {
+    borderBottomStyle: 'solid',
+    paddingBottom: 20
+  },
+  menuActive: {
+    fontWeight: 'bold'
+  },
+  footer: {
+    borderTopStyle: 'solid',
+    paddingTop: 20
+  },
+  notification: {
+    borderRadius: 5,
+    border: 2,
+    borderStyle: 'solid',
+    padding: 10
+  }
+}
 
 const Menu = () => (
-  <div>
-    <Link to='/'>anecdotes</Link>&nbsp;
-    <Link to='/create'>create new</Link>&nbsp;
-    <Link to='/about'>about</Link>
+  <div style={styles.menu}>
+    <NavLink activeStyle={styles.menuActive} exact to='/'>anecdotes</NavLink>&nbsp;
+    <NavLink activeStyle={styles.menuActive} exact to='/create'>create new</NavLink>&nbsp;
+    <NavLink activeStyle={styles.menuActive} exact to='/about'>about</NavLink>
   </div>
 )
 
@@ -48,7 +68,7 @@ const About = () => (
 )
 
 const Footer = () => (
-  <div>
+  <div style={styles.footer} >
     Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
 
     See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code.
@@ -172,7 +192,7 @@ class App extends React.Component {
           <div>
             <h1>Software anecdotes</h1>
             <Menu />
-            <div>{this.state.notification}</div>
+            {this.state.notification === '' ? '' : <div style={styles.notification}>{this.state.notification}</div>}
             <Route exact path='/' render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
             <Route path='/create' render={({ history }) => <CreateNew setNotification={this.setNotification} history={history} addNew={this.addNew} />} />
             <Route path='/about' render={() => <About />} />
