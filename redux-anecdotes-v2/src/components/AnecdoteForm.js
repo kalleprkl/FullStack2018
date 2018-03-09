@@ -11,7 +11,7 @@ class AnecdoteForm extends React.Component {
     this.props.anecdoteCreation(content)
     this.props.notify(`you have created "${content}"`, 5)
   }
-  
+
   render() {
     return (
       <div>
@@ -25,9 +25,9 @@ class AnecdoteForm extends React.Component {
   }
 }
 
+const actions = {
+  anecdoteCreation,
+  notify
+}
 
-export default connect(null,
-  {
-    anecdoteCreation,
-    notify
-  })(AnecdoteForm)
+export default connect(null, actions)(AnecdoteForm)
