@@ -6,8 +6,16 @@ import BlogForm from './components/BlogForm'
 import Login from './components/Login'
 import Message from './components/Message'
 import Blog from './components/Blog'
+import Users from './components/Users'
 import { connect } from 'react-redux'
 import { notify } from './reducers/notificationReducer'
+import { usersInitialize } from './reducers/userReducer'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { Container } from 'semantic-ui-react'
+import { blogsInitialize } from './reducers/blogReducer'
+import Nav from './components/Nav'
+import BlogList from './components/BlogList';
+import { login, logout, setUser } from './reducers/loginReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -19,22 +27,26 @@ class App extends React.Component {
       user: null,
       title: '',
       author: '',
-      url: ''}
+      url: ''
+    }
   }
 
   componentDidMount() {
+    this.props.usersInitialize()
+    this.props.blogsInitialize()
     blogService.getAll().then(blogs =>
       this.setState({ blogs: this.sortByLikes(blogs) })
     )
     const loggedUser = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUser) {
       const user = JSON.parse(loggedUser)
-      blogService.setToken(user.token)
-      this.setState({ user })
+      this.props.setUser(user)
+      //blogService.setToken(user.token)
+      //this.setState({ user })
     }
   }
 
-  login = async (event) => {
+  /*login = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({
@@ -48,11 +60,12 @@ class App extends React.Component {
         password: '',
         user
       })
-      this.props.notify(`welcome ${user.name}`, false, 5)
+      this.props.login(this.state.username, this.state.password)
+      this.props.notify(`welcome ${this.props.user.name}`, false, 5)
     } catch (exception) {
       this.props.notify('Incorrect username or password', true, 5)
     }
-  }
+  }*/
 
   /*setMessage = (message, isError) => {
     this.setState({
@@ -69,8 +82,9 @@ class App extends React.Component {
   }
 
   logout = () => {
-    window.localStorage.removeItem('loggedBlogAppUser')
-    this.setState({ user: null })
+    //window.localStorage.removeItem('loggedBlogAppUser')
+    this.props.logout()
+    //this.setState({ user: null })
   }
 
   newBlog = async (event) => {
@@ -90,9 +104,9 @@ class App extends React.Component {
         url: ''
       })
       this.blogForm.toggleVisibility()
-      this.props.notify(`Added new blog, ${blog.title} by ${blog.author}`, false, 5)
+      this.props.notify(`Added new blog, ${blog.title} by ${blog.author}`, false)
     } catch (exception) {
-      this.props.notify('Item must have a title and url', true, 5)
+      this.props.notify('Item must have a title and url', true)
     }
   }
 
@@ -122,6 +136,13 @@ class App extends React.Component {
     return blogs.sort((a, b) => { return b.likes - a.likes })
   }
 
+  blogById = (id) => {
+    console.log(id)
+    const blog = this.props.blogs.find(b => b._id === id)
+    console.log(this.props.blogs.length, this.state.blogs.length)
+    return blog
+  }
+
   render() {
 
     const blogForm = () => (
@@ -136,39 +157,52 @@ class App extends React.Component {
       </Togglable>
     )
 
-    return (
+    const logged = () => (
       <div>
-        {this.props.notifications.length === 0 ? '' : this.props.notifications.map(n => <Message key={n.id} message={n.content} error={n.error}>{n}</Message>)}
-        {this.state.user ?
-          <div>
-            <div>
-              logged in as {this.state.user.username} &nbsp;
-              <button onClick={this.logout}>logout</button>
-            </div>
-            <div>
-              {this.state.blogs.map(blog =>
-                <Blog
-                  key={blog._id}
-                  blog={blog}
-                  user={this.state.user}
-                  update={this.updateLikes}
-                  remove={this.removeBlog}
-                />
-              )}
-            </div>
-            {blogForm()}
-          </div> :
-          <Login
-            onSubmit={this.login}
-            handleLoginFieldChange={this.handleFieldChange}
-            usernameValue={this.state.username}
-            passwordValue={this.state.password}
-          />
-        }
+        <div>
+          logged in as {this.props.user.username} &nbsp;
+                <button onClick={this.logout}>logout</button>
+        </div>
+        <BlogList />
+        {blogForm()}
       </div>
+    )
+
+    /*const notLogged = () => (
+      <Login
+        onSubmit={this.login}
+        handleLoginFieldChange={this.handleFieldChange}
+        usernameValue={this.state.username}
+        passwordValue={this.state.password}
+      />
+    )*/
+
+    const notLogged = () => (
+      <Login />
+    )
+
+    return (
+      <Container>
+        <div>
+          <Router>
+            <div>
+              <div>
+                <Nav />
+                {this.props.notifications.length === 0 ? '' : this.props.notifications.map(n => <Message key={n.id} message={n.content} error={n.error}>{n}</Message>)}
+              </div>
+              <div>
+                <Route exact path='/' render={() => this.props.user ? logged() : notLogged()} />
+                <Route path="/users" render={() => <Users />} />
+                <Route exact path='/blogs/:id' render={({ match }) => <Blog blog={this.blogById(match.params.id)} />} />
+              </div>
+            </div>
+          </Router>
+        </div>
+      </Container>
     );
   }
 }
+
 
 /*const LoggedIn = ({ username, logout, blogs, newBlog, handleBlogFieldChange, title, author, url }) => {
   return (
@@ -191,8 +225,20 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    notifications: state.notifications
+    notifications: state.notifications,
+    users: state.users,
+    blogs: state.blogs,
+    user: state.user
   }
 }
 
-export default connect(mapStateToProps, { notify })(App)
+const actions = { 
+  notify, 
+  usersInitialize, 
+  blogsInitialize, 
+  login,
+  logout,
+  setUser 
+}
+
+export default connect(mapStateToProps, actions)(App)

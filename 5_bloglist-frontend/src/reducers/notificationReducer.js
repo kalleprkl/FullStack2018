@@ -16,11 +16,11 @@ const notificationReducer = (state = [], action) => {
         case 'CLEAR':
             return state.splice(1)
         default:
-        return state
+            return state
     }
 }
 
-export const notify = (notification, error, timer) => {
+export const notify = (notification, error) => {
     return (dispatch) => {
         dispatch({
             type: 'NOTIFY',
@@ -31,7 +31,7 @@ export const notify = (notification, error, timer) => {
             dispatch({
                 type: 'CLEAR'
             })
-        }, timer * 1000)
+        }, 5000)
     }
 }
 
