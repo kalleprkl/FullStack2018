@@ -6,6 +6,8 @@ import BlogForm from './components/BlogForm'
 import Login from './components/Login'
 import Message from './components/Message'
 import Blog from './components/Blog'
+import { connect } from 'react-redux'
+import { notify } from './reducers/notificationReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -17,10 +19,7 @@ class App extends React.Component {
       user: null,
       title: '',
       author: '',
-      url: '',
-      message: null,
-      isError: false
-    }
+      url: ''}
   }
 
   componentDidMount() {
@@ -49,13 +48,13 @@ class App extends React.Component {
         password: '',
         user
       })
-      this.setMessage('welcome ' + user.name)
+      this.props.notify(`welcome ${user.name}`, false, 5)
     } catch (exception) {
-      this.setMessage('Incorrect username or password', true)
+      this.props.notify('Incorrect username or password', true, 5)
     }
   }
 
-  setMessage = (message, isError) => {
+  /*setMessage = (message, isError) => {
     this.setState({
       message,
       isError
@@ -63,7 +62,7 @@ class App extends React.Component {
     setTimeout(() => {
       this.setState({ message: null, isError: false })
     }, 5000)
-  }
+  }*/
 
   handleFieldChange = (event) => {
     this.setState({ [event.target.name]: event.target.value })
@@ -91,9 +90,9 @@ class App extends React.Component {
         url: ''
       })
       this.blogForm.toggleVisibility()
-      this.setMessage('Added new blog, ' + blog.title + ' by ' + blog.author)
+      this.props.notify(`Added new blog, ${blog.title} by ${blog.author}`, false, 5)
     } catch (exception) {
-      this.setMessage('Item must have a title and url', true)
+      this.props.notify('Item must have a title and url', true, 5)
     }
   }
 
@@ -139,7 +138,7 @@ class App extends React.Component {
 
     return (
       <div>
-        {this.state.message ? <Message message={this.state.message} error={this.state.isError} /> : ''}
+        {this.props.notifications.length === 0 ? '' : this.props.notifications.map(n => <Message key={n.id} message={n.content} error={n.error}>{n}</Message>)}
         {this.state.user ?
           <div>
             <div>
@@ -190,4 +189,10 @@ class App extends React.Component {
   )
 }*/
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    notifications: state.notifications
+  }
+}
+
+export default connect(mapStateToProps, { notify })(App)
