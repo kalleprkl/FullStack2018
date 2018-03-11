@@ -16,6 +16,7 @@ import { blogsInitialize } from './reducers/blogReducer'
 import Nav from './components/Nav'
 import BlogList from './components/BlogList';
 import { login, logout, setUser } from './reducers/loginReducer'
+import { Table } from 'semantic-ui-react'
 
 class App extends React.Component {
   constructor(props) {
@@ -137,9 +138,7 @@ class App extends React.Component {
   }
 
   blogById = (id) => {
-    console.log(id)
     const blog = this.props.blogs.find(b => b._id === id)
-    console.log(this.props.blogs.length, this.state.blogs.length)
     return blog
   }
 
@@ -157,14 +156,11 @@ class App extends React.Component {
       </Togglable>
     )
 
-    const logged = () => (
+    const home = () => (
       <div>
-        <div>
-          logged in as {this.props.user.username} &nbsp;
-                <button onClick={this.logout}>logout</button>
-        </div>
+        <h2>blogs</h2>
+        <div style={{ paddingBottom: 20 }} ><BlogForm /></div>
         <BlogList />
-        {blogForm()}
       </div>
     )
 
@@ -181,26 +177,64 @@ class App extends React.Component {
       <Login />
     )
 
+
+
     return (
       <Container>
         <div>
           <Router>
             <div>
-              <div>
-                <Nav />
-                {this.props.notifications.length === 0 ? '' : this.props.notifications.map(n => <Message key={n.id} message={n.content} error={n.error}>{n}</Message>)}
-              </div>
-              <div>
-                <Route exact path='/' render={() => this.props.user ? logged() : notLogged()} />
-                <Route path="/users" render={() => <Users />} />
-                <Route exact path='/blogs/:id' render={({ match }) => <Blog blog={this.blogById(match.params.id)} />} />
-              </div>
+              {this.props.user ?
+                <div>
+                  <Nav />
+                  {this.props.notifications.length === 0 ? '' : this.props.notifications.map(n => <Message key={n.id} message={n.content} error={n.error}>{n}</Message>)}
+                  <div>
+                    <Route exact path='/' render={() => home()} />
+                    <Route exact path="/users" render={() => <Users />} />
+                    <Route exact path='/blogs/:id' render={({ match, history }) => <Blog blog={this.blogById(match.params.id)} history={history} />} />
+                    <Route exact path='/users/:id' render={({ match }) => <User user={this.props.users.find(u => u._id === match.params.id)} />} />
+                  </div>
+                </div> :
+                <div>
+                  <Route exact path='/' render={() => <Login />} />
+                  <Route exact path='/users' render={() => <Login />} />
+                  <Route exact path='/blogs/:id' render={() => <Login />} />
+                  <Route exact path='/users/:id' render={() => <Login />} />
+                </div>
+              }
             </div>
           </Router>
         </div>
       </Container>
     );
   }
+}
+
+const User = ({ user }) => {
+  if (!user) {
+    return <div>loading</div>
+  }
+  return (
+    <div>
+      <h2>{user.name}</h2>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Added blogs</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {user.blogs.map(blog =>
+            <Table.Row key={blog._id}>
+              <Table.Cell >
+                <Link to={`/blogs/${blog._id}`} >{blog.title}</Link>
+              </Table.Cell>
+            </Table.Row>
+          )}
+        </Table.Body>
+      </Table>
+    </div>
+  )
 }
 
 
@@ -232,13 +266,13 @@ const mapStateToProps = (state) => {
   }
 }
 
-const actions = { 
-  notify, 
-  usersInitialize, 
-  blogsInitialize, 
+const actions = {
+  notify,
+  usersInitialize,
+  blogsInitialize,
   login,
   logout,
-  setUser 
+  setUser
 }
 
 export default connect(mapStateToProps, actions)(App)

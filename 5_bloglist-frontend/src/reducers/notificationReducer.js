@@ -28,6 +28,7 @@ export const notify = (notification, error) => {
             error
         })
         setTimeout(() => {
+            console.log('time')
             dispatch({
                 type: 'CLEAR'
             })
